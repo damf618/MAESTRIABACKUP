@@ -1,9 +1,9 @@
-#if !defined( RF24DCC )
-#define RF24DCC
 #include <RF24/RF24.h>				// BIBLIOTECA DE RF24 POR TMRH20
 #include <RF24DC.h>
-#include <sstream>
 #include <fstream>
+#include <sstream>
+#include <string>
+
 
 #define WRITING_MAX_TIME 1000
 #define READING_MAX_TIME 200
@@ -16,11 +16,10 @@
 static RF24 radio(22,0);
 static const uint8_t pipes[][6] = {"1Node", "2Node","3Node","4Node","5Node"};
 uint64_t counter=0;						//message counter
-fstream textfile;
-textfile.open("REGISTRO_SISTEMA_ALARMA_INCENDIO.csv");
+static std::fstream textfile;
 
 void Monitor_Init(Monitor_t Monitor1){
-	bool RadioNumber = Monitor1.Number;															//DEVICE NUMBER 1
+	bool Radio_Number = Monitor1.Number;															//DEVICE NUMBER 1
 	// Setup and configure rf radio
     radio.begin();
     
@@ -36,7 +35,7 @@ void Monitor_Init(Monitor_t Monitor1){
         radio.openReadingPipe(1, pipes[0]);			// openReadingPipe	(uint8_t   number,const uint8_t * 	address).	Pipes 1-5 should share the
 													// same address, except the first byte. Only the first byte in the array should be unique.
 													// number.	Which pipe# to open, 0-5. address The 24, 32 or 40 bit address of the pipe to open.
-		Monitor.mode=TRANSMITTER;
+		textfile.open("REGISTRO_SISTEMA_ALARMA_INCENDIO.csv");	
 	}
 }
 
@@ -71,7 +70,7 @@ bool Read_Status(){
 
 static void Normalization_Delay(){
 	//Delay for normalization for 0,3 seg
-	started_waiting_at = millis();
+	unsigned long started_waiting_at = millis();
 	bool timeout=false;
 	while (!timeout) 
 	{
@@ -83,16 +82,13 @@ static void Normalization_Delay(){
 }
 
 void Read_Data (bool timeout, int statusA){
-    unsigned long got_time=0;
-	unsigned long fulltime=0;
-	char aux=1;
 	
 	// Describe the results
 	counter++;
 	if (timeout) 
 	{
 		printf("Failed. response timed out.\n");
-		textfile <<counter << "," <<"F,"<<"0"<<"0"<< endl;
+		textfile <<counter << "," <<"F,"<<"0"<<"0"<< std::endl;
     } else
 	{
     	
@@ -113,10 +109,8 @@ void Read_Data (bool timeout, int statusA){
 				radio.read(&statusA, sizeof(int));
 			}	
 		}
-		printf("Status Alarm: %i \n" ,stattusA);
-		textfile <<","<<stattusA<< endl;
+		printf("Status Alarm: %i \n" ,statusA);
+		textfile <<","<<statusA<< std::endl;
     }
 	Normalization_Delay();	
 }
-
-#endif

@@ -37,19 +37,6 @@ typedef enum {
     RF24_PA_ERROR
 } rf24_pa_dbm_e;
 
-/*damf modification
-*/
-typedef struct {
-	char CE_pin = 22;
-	char CSN_pin = 0;
-	char Number = 1;
-	int Status_A = 0;
-	int Status_F = 0;
-	int Status_Comm = 0;
-	
-}Monitor_t;
-
-
 
 /**
  * Data rate.  How fast data moves through the air.
@@ -156,14 +143,6 @@ public:
     #if defined (RF24_LINUX)
     virtual ~RF24() {};
     #endif
-	
-	/*DAMF MODIFICATION
-	*/
-	void Monitor_Init(char gpio1, char gpio2, char device_number, Monitor_t Monitor1);
-	void Writing_Data(Monitor_t Monitor1);
-	bool Read_Status();
-	void Read_Data(bool timeout, int statusA);
-
 	
     /**
      * Begin operation of the chip

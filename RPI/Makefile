@@ -17,7 +17,7 @@ REMOTE_ERROR="[ERROR] Remote machine not configured. Run configure with respecti
 include $(CONFIG_FILE)
 
 # Objects to compile
-OBJECTS=RF24.o
+OBJECTS=RF24.o RF24DC.o
 ifeq ($(DRIVER), MRAA)
 OBJECTS+=spi.o gpio.o compatibility.o
 else ifeq ($(DRIVER), RPi)

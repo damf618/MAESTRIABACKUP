@@ -7,13 +7,15 @@
 
 #include <SPI.h>
 #include "RF24.h"
+#include "printf.h"
+
 
 /****************** User Config ***************************/
 /***      Set this radio as radio number 0 or 1         ***/
 bool radioNumber = 0;
 
 /* Hardware configuration: Set up nRF24L01 radio on SPI bus plus pins 7 & 8 */
-RF24 radio(7,8);
+RF24 radio(6,8);
 /**********************************************************/
 
 byte addresses[][6] = {"1Node","2Node"};
@@ -40,6 +42,9 @@ void setup() {
   pinMode(ContactoF, INPUT);
   pinMode(resetPin, OUTPUT);
   radio.begin();
+  radio.setChannel(115);
+  radio.setPALevel(RF24_PA_LOW);
+  //radio.printDetails();
 
   //radio.setChannel(55);   
   // Open a writing and reading pipe on each radio, with opposite addresses
@@ -118,7 +123,7 @@ if (role == 1)  {
       }
     }
       
-    unsigned long got_time;
+    unsigned long got_time=0;
     
     
     if( radio.available()==1){
@@ -143,6 +148,7 @@ if (role == 1)  {
       while ((!radio.write( &stattusA, sizeof(int)))&&(micros()-got_time<=1000000)){
       Serial.print(F("."));
       }
+      Serial.print(F("\n"));
 /*..........................................................*/      
       radio.startListening();                                       // Now, resume listening so we catch the next packets.     
       Serial.print(F("Sent response "));
