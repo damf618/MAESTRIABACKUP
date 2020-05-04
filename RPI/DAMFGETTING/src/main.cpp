@@ -1,12 +1,16 @@
+
 /*
  Copyright (C) 2011 J. Coliz <maniacbug@ymail.com>
+
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
  version 2 as published by the Free Software Foundation.
+
  03/17/2013 : Charles-Henri Hallard (http://hallard.me)
               Modified to use with Arduipi board http://hallard.me/arduipi
 						  Changed to use modified bcm2835 and RF24 library
 TMRh20 2014 - Updated to work with optimized RF24 Arduino library
+
  */
 
 /**
@@ -22,6 +26,9 @@ TMRh20 2014 - Updated to work with optimized RF24 Arduino library
 #include <string>
 #include <unistd.h>
 #include <RF24/RF24.h>
+#include <nuevo.h>
+//#include <wiringPi.h>
+#include <GPIO.h>
 
 using namespace std;
 //
@@ -81,15 +88,29 @@ const uint8_t pipes[][6] = {"1Node", "2Node"};
 
 int main(int argc, char** argv)
 {
-
+	Print_Data();
+	sleep(5);
     bool role_ping_out = true, role_pong_back = false;
     bool role = role_pong_back;
 
     cout << "RF24/examples/GettingStarted/\n";
-
+	
+    GPIOMode(18,INPUTM,PULLUP);
+    GPIOMode(4,OUTM,PULLUP);
+    GPIOMode(17,OUTM,PULLUP);
+    printf("read from pin 24: %d\n", digitalRead(18));
+        
+    if(digitalRead(18))
+		cout << "KHE LO KE";
+	else 
+		cout << "QUE es lo que es";
+    
+    digitalWrite(4,HIGH);
+    digitalWrite(17,HIGH);
+    
     // Setup and configure rf radio
     radio.begin();
-
+	//radio.setChannel(115);
     // optionally, increase the delay between retries & # of retries
     radio.setRetries(15, 15);
     // Dump the configuration of the rf unit for debugging
@@ -126,7 +147,7 @@ int main(int argc, char** argv)
     }
 
     radio.startListening();
-
+        
     // forever loop
     while (1) {
         if (role == role_ping_out) {
@@ -205,3 +226,4 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
